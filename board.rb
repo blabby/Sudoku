@@ -32,6 +32,7 @@ def guess(pos, value)
 end
 
 def solved?
+    win_row? && win_col? && win_grid? && unique?
     #win across
     #win transposed
     #win from 0-2 , 3-5, 6-8 --> all are unique and all are 1-9 inclusive
@@ -57,9 +58,33 @@ def win_col?
     true
 end
 
-def win_grid?
+# def win_grid?
+#     X   Y
+# 1. 0-2 0-2
+# 2. 3-5 0-2
+# 3. 6-8 0-2
+# 4. 0-2 3-5
+# 5. 3-5 3-5
+# 6. 6-8 3-5
+# 7. 0-2 6-8
+# 8. 3-5 6-8
+# 9. 6-8 6-8
+# end
 
-end
+#Take the array of numbers, and keep passing them all into trystuff until they all return true or one returns false.
+
+def trystuff(x_coordinates, y_coordinates)
+    x= x_coordinates
+    y = y_coordinates
+    array = [] #use hash instead
+    y.each do |row|
+        x.each do |col|
+            array << @grid[row][col]
+        end
+    end
+    p array 
+    #gonna verify if hash.keys has 9 items, otherwise not all are unique
+    end
 
 def unique?
     unique_row && unique_col
@@ -93,5 +118,6 @@ end
 g = Board.new
 g.from_file("sudoku1.txt")
 g.render
-p g.unique?
+g.trystuff([0,1,2], [6,7,8])
+
 
