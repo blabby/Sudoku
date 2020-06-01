@@ -1,4 +1,5 @@
 require_relative "tile.rb"
+require "byebug"
 class Board
     attr_accessor :grid
 #Contains the tiles, the game board
@@ -33,9 +34,6 @@ end
 
 def solved?
     win_row? && win_col? && win_grid? && unique?
-    #win across
-    #win transposed
-    #win from 0-2 , 3-5, 6-8 --> all are unique and all are 1-9 inclusive
 end
 
 def win_row?
@@ -58,7 +56,7 @@ def win_col?
     true
 end
 
-# def win_grid?
+def win_grid?
 #     X   Y
 # 1. 0-2 0-2
 # 2. 3-5 0-2
@@ -69,21 +67,27 @@ end
 # 7. 0-2 6-8
 # 8. 3-5 6-8
 # 9. 6-8 6-8
-# end
+coordinates = [[(0..2).to_a,(0..2).to_a],[(3..5).to_a,(0..2).to_a],[(6..8).to_a,(0..2).to_a],[(0..2).to_a,(3..5).to_a],[(3..5).to_a,(3..5).to_a],[(6..8).to_a,(3..5).to_a],[(0..2).to_a,(6..8).to_a],[(3..5).to_a,(6..8).to_a],[(6..8).to_a,(6..8).to_a]]
+
+coordinates.each do |subarray|
+    return false if !unique_grid?(subarray.first, subarray.last)
+end
+    true
+end
 
 #Take the array of numbers, and keep passing them all into trystuff until they all return true or one returns false.
 
-def trystuff(x_coordinates, y_coordinates)
+def unique_grid?(x_coordinates, y_coordinates)
     x= x_coordinates
     y = y_coordinates
-    array = [] #use hash instead
+    unique = {} 
     y.each do |row|
         x.each do |col|
-            array << @grid[row][col]
+            unique[@grid[row][col]] = 1
         end
     end
-    p array 
-    #gonna verify if hash.keys has 9 items, otherwise not all are unique
+    return false if unique.keys.length != 9
+    true
     end
 
 def unique?
@@ -108,8 +112,8 @@ def unique_col
             unique[col] = 1
         end
     end
-    return true if unique.keys.length == 9
-    false
+    return false if unique.keys.length != 9
+    true
 end
 
 end
@@ -117,7 +121,7 @@ end
 
 g = Board.new
 g.from_file("sudoku1.txt")
-g.render
-g.trystuff([0,1,2], [6,7,8])
+p g.solved?
+
 
 
