@@ -1,18 +1,20 @@
 class Tile
-    attr_reader :value
+    attr_reader :value, :changeable
 #Each tile of the gameboard
 def initialize(value)
     @value = value
-    @changeable = false
+    @changeable = true
+    default_value?
 end
 
 def default_value?
-    if @value == 0
-        @changeable = true
+    if @value != 0
+        @changeable = false
     end
+
 end
 
-def value=(new_value)
+def value=(new_value) #might not need this method
     if @changeable == true
         @value = new_value
     else 

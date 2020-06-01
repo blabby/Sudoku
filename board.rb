@@ -23,7 +23,7 @@ end
 def fill_grid(array)
     @grid.each_with_index do |row,i1|
         row.each_with_index do |col,i2|
-            @grid[i1][i2] = Tile.new(array.shift).value
+            @grid[i1][i2] = Tile.new(array.shift) #.value
         end
     end
 end
@@ -116,12 +116,26 @@ def unique_col
     true
 end
 
+def board_full?
+    @grid.each do |row|
+        return false if row.any? {|el| el == 0}
+    end
+    true
+end
+
+def changeable_tile?(pos)
+    if @grid[pos.first][pos.last].changeable
+        return true
+    end
+    false
+    end
 end
 
 
 g = Board.new
 g.from_file("sudoku1.txt")
-p g.solved?
+g.render #have to change grid so that it shows values but is able to acess the changeable instance variable on tiles
+p g.changeable_tile?([0,2])
 
 
 
