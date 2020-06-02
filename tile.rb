@@ -11,14 +11,5 @@ def default_value?
     if @value != 0
         @changeable = false
     end
-
-end
-
-def value=(new_value) #might not need this method
-    if @changeable == true
-        @value = new_value
-    else 
-        puts "You cannot change this value"
-    end
 end
 end

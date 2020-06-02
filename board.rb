@@ -1,7 +1,7 @@
 require_relative "tile.rb"
-require "byebug"
 class Board
-    attr_accessor :grid, :display_grid
+    attr_accessor :display_grid
+    attr_reader :grid
 #Contains the tiles, the game board
 def initialize
     @grid = Array.new(9) {Array.new(9, "")}
@@ -85,8 +85,6 @@ end
     true
 end
 
-#Take the array of numbers, and keep passing them all into trystuff until they all return true or one returns false.
-
 def unique_grid?(x_coordinates, y_coordinates)
     x= x_coordinates
     y = y_coordinates
@@ -141,12 +139,3 @@ def changeable_tile?(pos)
     end
 
 end
-
-
-# g = Board.new
-# # g.from_file("sudoku1.txt")
-# # g.render_values
-# g.from_file("sudoku1.txt")
-# g.render_values
-# p g.grid
-# p g.display_grid
