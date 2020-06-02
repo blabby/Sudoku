@@ -7,21 +7,43 @@ class Game
 
     def run
         welcome
-        while 
+        while !win? || !lose?
+            puts "            "
+            puts "            "
+            render
+            position = get_position
+            value = get_value
+            place_value(position, value)
+            render
+            break if win?
+            break if lose?
+        end 
+        puts "Game Over!"
     end
 
     def welcome
         puts "     Welcome to Sudoku!   "
         puts "  Please fill in the 0s below  "
-        render
-        while !win? || !lose?
-            position = get_position
-            place_value(position)
-        end
     end
 
     def render
         @board.render
+    end
+
+    def win?
+        if @board.solved?
+        puts "You Win!"
+        return true
+        end
+        false
+    end
+
+    def lose?
+        if @board.board_full?
+            puts "You did not solve the puzzle."
+            return true
+        end
+        false
     end
 
     def get_position
@@ -29,25 +51,49 @@ class Game
         position = gets.chomp.split(" ").map(&:to_i)
     end
 
-    def place_value(pos, new_value)
-        @grid[pos.first][pos.last] =  valid_value(new_value) # need to account for unchangeable tiles
-    end
-
-    def valid_value(value)
-        valid_numbers = (1..9).to_a
-        while !valid_numbers.include?(value)
+    def get_value
+        puts "Please enter a value between 1-9" 
+        valid_nums = (1..9).to_a
+        value = gets.chomp.to_i
+        while !valid_nums.include?(value)
             puts "Please enter a value between 1-9"
             value = gets.chomp.to_i
         end
         value
     end
-#To play game --> just runs the game
-#prompt then pass into board method guess(pos, value)
-#valid? method to check that its a number between 1-9 inclusive
-#at the very end, check if board is full, if board is full but you didnt win, say you messed up somewhere, maybe restart?
-#Also for tiles, make sure that some of them cant be changed if you got that value from the file (IE not 0)
+
+    def place_value(pos, new_value)
+        if @board.changeable_tile?(pos)
+        @board.display_grid[pos.first][pos.last] = valid_value(new_value) 
+        else
+            puts "You cannot change this value"
+            sleep(1)
+            puts "Please try again"
+            false
+        end
+    end
+
+    def valid_value(value)
+        valid_numbers = (1..9).to_a
+        while !valid_numbers.include?(value)
+            puts "Number not valid. Please re-enter a value between 1-9"
+            value = gets.chomp.to_i
+        end
+        value
+    end
 end
 
+puts "Would you like to play Soduku: 1 or 2 or 3 (Enter a number)"
+game = gets.chomp.to_i
 g = Game.new
-g.board.from_file("sudoku1.txt")
-g.run
+case game
+when 1
+    g.board.from_file("sudoku1.txt")
+    g.run
+when 2
+    g.board.from_file("sudoku2.txt")
+    g.run
+when 3
+    g.board.from_file("sudoku1.txt")
+    g.run
+end

@@ -1,15 +1,24 @@
 require_relative "tile.rb"
 require "byebug"
 class Board
-    attr_accessor :grid
+    attr_accessor :grid, :display_grid
 #Contains the tiles, the game board
 def initialize
     @grid = Array.new(9) {Array.new(9, "")}
+    @display_grid = Marshal.load(Marshal.dump(@grid))
+end
+
+def render_values
+    @display_grid.each_with_index do |row,i1|
+        row.each_with_index do |col,i2|
+            @display_grid[i1][i2] = @grid[i1][i2].value
+        end
+    end
 end
 
 def render
     puts "   0  1  2  3  4  5  6  7  8   "
-    @grid.each_with_index do |row, i1|
+    @display_grid.each_with_index do |row, i1|
         puts "#{i1} #{row}"
     end
 end
@@ -18,18 +27,19 @@ def from_file(textfile)
      text_array = File.readlines(textfile).map(&:chomp).join("")
      text_array = text_array.split("")
      fill_grid(text_array.map(&:to_i))
+     render_values
 end
 
 def fill_grid(array)
     @grid.each_with_index do |row,i1|
         row.each_with_index do |col,i2|
-            @grid[i1][i2] = Tile.new(array.shift) #.value
+            @grid[i1][i2] = Tile.new(array.shift)
         end
     end
 end
 
 def guess(pos, value)
-    @grid[pos.first][pos.last] = value
+    @display_grid[pos.first][pos.last] = value
 end
 
 def solved?
@@ -38,7 +48,7 @@ end
 
 def win_row?
     array = (1..9).to_a
-    @grid.each do |row|
+    @display_grid.each do |row|
         row.each do |col|
             return false if !array.include?(col)
         end
@@ -48,7 +58,7 @@ end
 
 def win_col?
     array = (1..9).to_a
-    @grid.transpose.each do |row|
+    @display_grid.transpose.each do |row|
         row.each do |col|
             return false if !array.include?(col)
         end
@@ -83,7 +93,7 @@ def unique_grid?(x_coordinates, y_coordinates)
     unique = {} 
     y.each do |row|
         x.each do |col|
-            unique[@grid[row][col]] = 1
+            unique[@display_grid[row][col]] = 1
         end
     end
     return false if unique.keys.length != 9
@@ -96,7 +106,7 @@ end
 
 def unique_row
     unique = {}
-    @grid.each do |row|
+    @display_grid.each do |row|
         row.each do |col|
             unique[col] = 1
         end
@@ -107,7 +117,7 @@ end
 
 def unique_col
     unique = {}
-    @grid.transpose.each do |row|
+    @display_grid.transpose.each do |row|
         row.each do |col|
             unique[col] = 1
         end
@@ -117,7 +127,7 @@ def unique_col
 end
 
 def board_full?
-    @grid.each do |row|
+    @display_grid.each do |row|
         return false if row.any? {|el| el == 0}
     end
     true
@@ -129,13 +139,14 @@ def changeable_tile?(pos)
     end
     false
     end
+
 end
 
 
-g = Board.new
-g.from_file("sudoku1.txt")
-g.render #have to change grid so that it shows values but is able to acess the changeable instance variable on tiles
-p g.changeable_tile?([0,2])
-
-
-
+# g = Board.new
+# # g.from_file("sudoku1.txt")
+# # g.render_values
+# g.from_file("sudoku1.txt")
+# g.render_values
+# p g.grid
+# p g.display_grid
